@@ -4,9 +4,10 @@
 from solar_objects import Star, Planet
 from solar_vis import DrawableObject
 
+
 def read_space_objects_data_from_file(input_filename):
-    """Cчитывает данные о космических объектах из файла, создаёт сами объекты
-    и вызывает создание их графических образов
+    """Считывает данные о космических объектах из файла, создаёт сами объекты
+    и вызывает создание их графических образов.
 
     Параметры:
 
@@ -22,11 +23,11 @@ def read_space_objects_data_from_file(input_filename):
             object_type = line.split()[0].lower()
             if object_type == "star":
                 star = Star()
-                parse_star_parameters(line, star)
+                star = parse_star_parameters(line, star)
                 objects.append(star)
             elif object_type == "planet":
                 planet = Planet()
-                parse_planet_parameters(line, planet)
+                planet = parse_planet_parameters(line, planet)
                 objects.append(planet)
             else:
                 print("Unknown space object")
@@ -37,7 +38,7 @@ def read_space_objects_data_from_file(input_filename):
 def parse_star_parameters(line, star):
     """Считывает данные о звезде из строки.
 
-    Входная строка должна иметь слеюущий формат:
+    Входная строка должна иметь следующий формат:
 
     Star <радиус в пикселах> <цвет> <масса> <x> <y> <Vx> <Vy>
 
@@ -53,7 +54,17 @@ def parse_star_parameters(line, star):
 
     **star** — объект звезды.
     """
-    pass  # FIXME: допишите парсер
+    param_list = line.split()
+    star.R = float(param_list[1])
+    star.color = param_list[2]
+    star.m = float(param_list[3])
+    star.x = float(param_list[4])
+    star.y = float(param_list[5])
+    star.Vx = float(param_list[6])
+    star.Vy = float(param_list[7])
+
+    return star
+
 
 def parse_planet_parameters(line, planet):
     """Считывает данные о планете из строки.
@@ -73,7 +84,17 @@ def parse_planet_parameters(line, planet):
 
     **planet** — объект планеты.
     """
-    pass  # FIXME: допишите парсер
+    param_list = line.split()
+    planet.R = float(param_list[1])
+    planet.color = param_list[2]
+    planet.m = float(param_list[3])
+    planet.x = float(param_list[4])
+    planet.y = float(param_list[5])
+    planet.Vx = float(param_list[6])
+    planet.Vy = float(param_list[7])
+
+    return planet
+
 
 def write_space_objects_data_to_file(output_filename, space_objects):
     """Сохраняет данные о космических объектах в файл.
@@ -92,8 +113,14 @@ def write_space_objects_data_to_file(output_filename, space_objects):
     """
     with open(output_filename, 'w') as out_file:
         for obj in space_objects:
-            print(out_file, "%s %d %s %f" % ('1', 2, '3', 4.5))
-            # FIXME!
+            param_string = ''
+            if obj.type == 'star':
+                param_string += 'Star '
+            elif obj.type == 'planet':
+                param_string += 'Planet '
+            param_list = [obj.R, obj.color, obj.m, obj.x, obj.y, obj.Vx, obj.Vy]
+            param_string += ' '.join([str(param) for param in param_list])
+            out_file.write(param_string)
 
 
 if __name__ == "__main__":
