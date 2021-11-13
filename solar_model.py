@@ -2,7 +2,7 @@
 # license: GPLv3
 
 from math import sin, cos, atan, pi
-
+from solar_vis import DrawableObject
 
 gravitational_constant = 6.67408E-11
 """Гравитационная постоянная Ньютона G"""
@@ -25,8 +25,6 @@ def calculate_force(body, space_objects):
         dx = obj.x - body.x
         dy = obj.y - body.y
         r = (dx ** 2 + dy ** 2) ** 0.5
-        if r < body.R + obj.R:
-            r = body.R + obj.R
         try:
             fi = atan(dy / abs(dx))
         except ZeroDivisionError:
@@ -36,6 +34,8 @@ def calculate_force(body, space_objects):
         F = gravitational_constant * body.m * obj.m / r ** 2
         body.Fx += F * cos(fi)
         body.Fy += F * sin(fi)
+
+    return body
 
 
 def move_space_object(body, dt):
@@ -52,6 +52,8 @@ def move_space_object(body, dt):
     body.x += body.Vx * dt + ax * dt ** 2 / 2
     body.y += body.Vy * dt + ay * dt ** 2 / 2
 
+    return body
+
 
 def recalculate_space_objects_positions(space_objects, dt):
     """Пересчитывает координаты объектов.
@@ -62,10 +64,12 @@ def recalculate_space_objects_positions(space_objects, dt):
 
     **dt** — шаг по времени
     """
-    for body in space_objects:
-        calculate_force(body, space_objects)
-    for body in space_objects:
-        move_space_object(body, dt)
+    for body_i in range(len(space_objects)):
+        space_objects[body_i] = calculate_force(space_objects[body_i], space_objects)
+    for body_i in range(len(space_objects)):
+        space_objects[body_i] = move_space_object(space_objects[body_i], dt)
+
+    return [DrawableObject(obj) for obj in space_objects]
 
 
 if __name__ == "__main__":
