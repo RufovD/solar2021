@@ -29,7 +29,7 @@ space_objects = []
 """Список космических объектов."""
 
 
-def execution(delta):
+def execution(delta, scale_factor):
     """Функция исполнения -- выполняется циклически, вызывая обработку всех небесных тел,
     а также обновляя их положение на экране.
     Цикличность выполнения зависит от значения глобальной переменной perform_execution.
@@ -37,7 +37,7 @@ def execution(delta):
     """
     global model_time
     global displayed_time
-    recalculate_space_objects_positions([dr.obj for dr in space_objects], delta)
+    recalculate_space_objects_positions([dr.obj for dr in space_objects], delta, scale_factor)
     model_time += delta
 
 
@@ -70,12 +70,13 @@ def open_file():
     global space_objects
     global browser
     global model_time
+    global scale_factor
 
     model_time = 0.0
     in_filename = "solar_system.txt"
     space_objects = read_space_objects_data_from_file(in_filename)
     max_distance = max([max(abs(obj.obj.x), abs(obj.obj.y)) for obj in space_objects])
-    calculate_scale_factor(max_distance)
+    scale_factor = calculate_scale_factor(max_distance)
 
 
 def handle_events(events, menu):
@@ -87,7 +88,7 @@ def handle_events(events, menu):
 
 
 def slider_to_real(val):
-    return 500000*(val + 11)
+    return 500000 * (val + 11)
 
 
 def slider_reaction(event):
@@ -143,6 +144,7 @@ def main():
     global start_button
     global perform_execution
     global timer
+    global scale_factor
 
     print('Modelling started!')
     physical_time = 0
@@ -161,15 +163,13 @@ def main():
         handle_events(pg.event.get(), menu)
         cur_time = time.perf_counter()
         if perform_execution:
-            execution((cur_time - last_time) * time_scale)
+            execution((cur_time - last_time) * time_scale, scale_factor)
             text = "%d seconds passed" % (int(model_time))
             timer.set_text(text)
 
         last_time = cur_time
         drawer.update(space_objects, box)
         time.sleep(1.0 / 60)
-        for o in space_objects:
-            print()
 
     print('Modelling finished!')
 
