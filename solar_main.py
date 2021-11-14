@@ -21,7 +21,7 @@ model_time = 0
 """Физическое время от начала расчёта.
 Тип: float"""
 
-time_scale = 1000.0
+time_scale = 1000000.0
 """Шаг по времени при моделировании.
 Тип: float"""
 
@@ -87,7 +87,7 @@ def handle_events(events, menu):
 
 
 def slider_to_real(val):
-    return np.exp(5 + val)
+    return 500000*(val + 11)
 
 
 def slider_reaction(event):
@@ -168,6 +168,8 @@ def main():
         last_time = cur_time
         drawer.update(space_objects, box)
         time.sleep(1.0 / 60)
+        for o in space_objects:
+            print()
 
     print('Modelling finished!')
 
