@@ -21,7 +21,7 @@ model_time = 0
 """Физическое время от начала расчёта.
 Тип: float"""
 
-time_scale = 1000000.0
+time_scale = 1000000
 """Шаг по времени при моделировании.
 Тип: float"""
 
@@ -88,7 +88,7 @@ def handle_events(events, menu):
 
 
 def slider_to_real(val):
-    return 500000 * (val + 11)
+    return 500000 * (1.35**(val))
 
 
 def slider_reaction(event):
@@ -152,7 +152,7 @@ def main():
     pg.init()
 
     width = 1000
-    height = 900
+    height = 800
     screen = pg.display.set_mode((width, height))
     last_time = time.perf_counter()
     drawer = Drawer(screen)
