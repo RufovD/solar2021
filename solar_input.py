@@ -96,7 +96,7 @@ def parse_planet_parameters(line, planet):
     return planet
 
 
-def write_space_objects_data_to_file(output_filename, space_objects):
+def write_space_objects_data_to_file(output_filename, space_objects, model_time):
     """Сохраняет данные о космических объектах в файл.
 
     Строки должны иметь следующий формат:
@@ -111,16 +111,19 @@ def write_space_objects_data_to_file(output_filename, space_objects):
 
     **space_objects** — список объектов планет и звёзд
     """
-    with open(output_filename, 'w') as out_file:
-        for obj in space_objects:
-            param_string = ''
-            if obj.type == 'star':
-                param_string += 'Star '
-            elif obj.type == 'planet':
-                param_string += 'Planet '
-            param_list = [obj.R, obj.color, obj.m, obj.x, obj.y, obj.Vx, obj.Vy]
-            param_string += ' '.join([str(param) for param in param_list])
-            out_file.write(param_string)
+    if len(space_objects) == 2 and ((space_objects[0].type == 'star' and space_objects[1].type == 'planet') or
+                                    (space_objects[1].type == 'star' and space_objects[0].type == 'planet')):
+        if space_objects[0].type == 'star' and space_objects[1].type == 'planet':
+            star = space_objects[0]
+            planet = space_objects[1]
+        else:
+            star = space_objects[1]
+            planet = space_objects[0]
+        with open(output_filename, 'a') as out_file:
+            distance = ((planet.x - star.x) ** 2 + (planet.y - star.y) ** 2) ** 0.5
+            speed = (planet.Vx ** 2 + planet.Vy ** 2) ** 0.5
+            out_file.write(('\t').join([str(i) for i in [model_time, distance, speed, '\n']]))
+
 
 
 if __name__ == "__main__":
